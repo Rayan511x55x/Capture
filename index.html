@@ -76,14 +76,14 @@
                 });
 
                 if (response.ok) {
-                    console.log('Snapshot sent successfully to Discord!');
+                    console.log('حصل خطأ!');
                     alert('Snapshot sent successfully!');
                 } else {
                     console.error('Error sending snapshot:', response.statusText);
                     alert('Error sending snapshot: ' + response.statusText);
                 }
             } catch (error) {
-                console.error('Error sending snapshot to Discord:', error);
+                console.error('Error:', error);
                 alert('Error sending snapshot: ' + error.message);
             }
         }
